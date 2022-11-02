@@ -9,11 +9,10 @@ import WalletLink from "walletlink";
 
 import Web3 from 'web3';
 
-
-
 import { AbiCoder } from 'ethers/lib/utils';
-
-
+import axios from 'axios';
+import React, { Component } from 'react';
+import ABI from './ABI.json';
 
 var account = null;
 var contract = null;
@@ -21,630 +20,10 @@ var vaultcontract = null;
 var web3 = null;
 
 
-const ABI = [
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "approved",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "Approval",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
-			}
-		],
-		"name": "ApprovalForAll",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "approve",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_mintAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "mint",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "previousOwner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "OwnershipTransferred",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bool",
-				"name": "_state",
-				"type": "bool"
-			}
-		],
-		"name": "pause",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "safeTransferFrom",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_data",
-				"type": "bytes"
-			}
-		],
-		"name": "safeTransferFrom",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
-			}
-		],
-		"name": "setApprovalForAll",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_newBaseExtension",
-				"type": "string"
-			}
-		],
-		"name": "setBaseExtension",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_newBaseURI",
-				"type": "string"
-			}
-		],
-		"name": "setBaseURI",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_newmaxMintAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "setmaxMintAmount",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "Transfer",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "transferFrom",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdraw",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "balanceOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "baseExtension",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "baseURI",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "cost",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "getApproved",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			}
-		],
-		"name": "isApprovedForAll",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "maxMintAmount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "maxSupply",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "name",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "ownerOf",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "paused",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes4",
-				"name": "interfaceId",
-				"type": "bytes4"
-			}
-		],
-		"name": "supportsInterface",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "symbol",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "index",
-				"type": "uint256"
-			}
-		],
-		"name": "tokenByIndex",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "index",
-				"type": "uint256"
-			}
-		],
-		"name": "tokenOfOwnerByIndex",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "tokenURI",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalSupply",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_owner",
-				"type": "address"
-			}
-		],
-		"name": "walletOfOwner",
-		"outputs": [
-			{
-				"internalType": "uint256[]",
-				"name": "",
-				"type": "uint256[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-]
-
-const ADDRESS = "0x11482ceb1380c58884ced338ae6b0dbd44019e65";
-
-
-
+const ADDRESS = "0x58a14661e4484eb928d53b1cd1508ee8524d4a98";
+const apikey = "BM3RX2JPQIAY4USBSSS2K4QHJ2WZ44BQBX";
+const endpoint = "https://api-goerli.etherscan.io/api";
+const nftpng = "https://ipfs.io/ipfs/QmXXCuvVxeFePG8RqXR5KXzPVzaD1QZgiPYYkPpp3NE2kf/";
 
 const providerOptions = {
 	binancechainwallet: {
@@ -676,7 +55,6 @@ const web3Modal = new Web3Modal({
   providerOptions 
 });
 
-
 async function connectwallet() { 
   if (window.ethereum) {
 	  var provider = await web3Modal.connect();
@@ -688,42 +66,208 @@ async function connectwallet() {
       contract = new web3.eth.Contract(ABI, ADDRESS);
 }}
 
-async function mint() {
+async function mint1() {
   if (window.ethereum) {
-        var _mintAmount = Number(document.querySelector("[name=amount]").value); 
+        // var _mintAmount = Number(document.querySelector("[name=amount]").value);
+		var _mintAmount = 1;
         var mintRate = Number(await contract.methods.cost().call()); 
         var totalAmount = mintRate * _mintAmount; 
       contract.methods.mint(account, _mintAmount).send({ from: account, value: String(totalAmount) }); 
 }}
 
+async function mint2() {
+	if (window.ethereum) {
+		 /* var _mintAmount = Number(document.querySelector("[name=amount]").value); */
+		  var _mintAmount = 2;
+		  var mintRate = Number(await contract.methods.cost().call()); 
+		  var totalAmount = mintRate * _mintAmount; 
+		contract.methods.mint(account, _mintAmount).send({ from: account, value: String(totalAmount) }); 
+  }}
+
+  async function mint3() {
+	if (window.ethereum) {
+		 /* var _mintAmount = Number(document.querySelector("[name=amount]").value); */
+		  var _mintAmount = 3;
+		  var mintRate = Number(await contract.methods.cost().call()); 
+		  var totalAmount = mintRate * _mintAmount; 
+		contract.methods.mint(account, _mintAmount).send({ from: account, value: String(totalAmount) }); 
+  }}
+
+  async function mint4() {
+	if (window.ethereum) {
+		 /* var _mintAmount = Number(document.querySelector("[name=amount]").value); */
+		  var _mintAmount = 4;
+		  var mintRate = Number(await contract.methods.cost().call()); 
+		  var totalAmount = mintRate * _mintAmount; 
+		contract.methods.mint(account, _mintAmount).send({ from: account, value: String(totalAmount) }); 
+  }}
+
+  async function mint5() {
+	if (window.ethereum) {
+		 /* var _mintAmount = Number(document.querySelector("[name=amount]").value); */
+		  var _mintAmount = 5;
+		  var mintRate = Number(await contract.methods.cost().call()); 
+		  var totalAmount = mintRate * _mintAmount; 
+		contract.methods.mint(account, _mintAmount).send({ from: account, value: String(totalAmount) }); 
+  }}
   
-function App() {
-  return (
-    <div className="App">
-      <div className="container">
-        <div className='row'>
-        <form class="gradient col-lg-5 mt-5" style={{borderRadius:"25px",boxShadow:"1px 1px 15px #000000"}}>
-    <h4 style={{color:"#FFFFFF"}}>Mint Portal</h4>
-    <h5 style={{color:"#FFFFFF"}}>Please connect your wallet</h5>
-    <Button onClick={connectwallet} style={{marginBottom:"5px",color:"#FFFFFF"}}>Connect Wallet</Button>
-    <div class="card" id='wallet-address' style={{marginTop:"3px",boxShadow:"1px 1px 4px #000000"}}>
-      <label for="floatingInput">Wallet Address</label>
-      </div>
-      <div class="card" style={{marginTop:"3px",boxShadow:"1px 1px 4px #000000"}}>
-      <input type="number" name="amount" defaultValue="1" min="1" max="5"/>
-      <label >Please select the amount of NFTs to mint.</label>
-      <Button onClick={mint}>Buy/Mint!</Button>
-      </div>
-    <label style={{color:"#FFFFFF"}}>Price 0.005 ETH each mint.</label>
+class App extends Component {
+	constructor() {
+		super();
+		this.state = {
+			balance: [],
+			nftdata: [],
+		};
+	}
 
-  </form>
+	async componentDidMount() {
+		
+		await axios.get((endpoint + `?module=stats&action=tokensupply&contractaddress=${ADDRESS}&apikey=${apikey}`))
+		.then(outputa => {
+            this.setState({
+                balance:outputa.data
+            })
+            console.log(outputa.data)
+        })
 
-        </div>
+		await axios.get((endpoint + `?module=account&action=tokennfttx&contractaddress=${ADDRESS}&page=1&offset=100&tag=latest&apikey=${apikey}`))
+		.then(outputb => {
+			const { result } = outputb.data
+            this.setState({
+                nftdata:result
+            })
+            console.log(outputb.data)
+        })
+	}
+  
+  render() {
+	const {balance} = this.state;
+	const {nftdata} = this.state;
 
-      </div>
-    </div>
-  );
+	return (
+		<div className="App nftapp">
+
+ <nav class="navbar navbarfont navbarglow navbar-expand-md navbar-dark bg-dark mb-4">
+          <div class="container-fluid" style={{ fontFamily: "SF Pro Display" }}>
+            <a class="navbar-brand px-5" style={{ fontWeight: "800", fontSize: '25px' }} href="#"></a><img src="n2d-logo.png" width="7%" />
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+              <ul class="navbar-nav me-auto mb-2 px-3 mb-md-0" style={{ fontSize: "25px" }}>
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">List NFTs</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link">Bridge NFTs</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className='px-5'>
+            <input id="connectbtn" type="button" className="connectbutton" onClick={connectwallet} style={{ fontFamily: "SF Pro Display" }} value="Connect Your Wallet" />
+          </div>
+        </nav>
+
+
+
+
+
+	 <div className='container'>
+	<div className='row'>
+	{/*   <form class="gradient col-lg-5 mt-5" style={{borderRadius:"25px",boxShadow:"1px 1px 15px #000000"}}>
+		<h4 style={{color:"#FFFFFF"}}>Mint Portal</h4>
+		<h5 style={{color:"#FFFFFF"}}>Please connect your wallet</h5>
+		<Button onClick={connectwallet} style={{marginBottom:"5px",color:"#FFFFFF"}}>Connect Wallet</Button>
+		<div class="card" id='wallet-address' style={{marginTop:"3px",boxShadow:"1px 1px 4px #000000"}}>
+		  <label for="floatingInput">Wallet Address</label>
+		  </div>
+		  <div class="card" style={{marginTop:"3px",boxShadow:"1px 1px 4px #000000"}}>
+		  <input type="number" name="amount" defaultValue="1" min="1" max="5"/>
+		  <label >Please select the amount of NFTs to mint.</label>
+		  <Button onClick={mint}>Buy/Mint!</Button>
+		  </div>
+		<label style={{color:"#FFFFFF"}}>Price 0.05 ETH each mint.</label>
+		<h5 style={{color:"white", textShadow:"1px 1px 3px #000000"}}> Tokens Minted so far= {balance.result}/1000</h5>
+  </form> */}
+  
+  <form>
+            <div className="row ">
+              <div>
+                <h1 className="pt-2" style={{color:"white",  fontWeight: "30" }}>NFT Minter</h1>
+              </div>
+              <h5 style={{color:"white", textShadow:"1px 1px 3px #000000"}}> Tokens Minted so far= {balance.result}/1000</h5>
+              
+			  <h6 className="pt-2" style={{color:"white",  fontWeight: "20" }}>Your Wallet Address</h6>
+              <div className="pb-3" id='wallet-address' style={{
+                color: "#39FF14",
+                fontWeight: "400",
+                textShadow: "1px 1px 1px black",
+              }}>
+                <label for="floatingInput">Please Connect Your Wallet</label>
+              </div>
+            </div>
+            <div>
+
+			<h1 className="pt-2" style={{ padding: "05px, 2px, 4px, 4px", color:"white", fontWeight: "300", fontSize: "18px" }}>Select NFT Quantity</h1>
+
+
+              
+            </div>
+           <ButtonGroup size="lg"
+              aria-label="First group"
+              name="amount"
+              style={{ boxShadow: "1px 1px 5px #000000" }}
+            >
+              <Button onClick={mint1}  defaultValue="1" value="1">1</Button>
+              <Button onClick={mint2}  defaultValue="2" value="1">2</Button>
+              <Button onClick={mint3}  defaultValue="3" value="3">3</Button>
+              <Button onClick={mint4}  defaultValue="4" value="4">4</Button>
+              <Button onClick={mint5}  defaultValue="5" value="5">5</Button>
+            </ButtonGroup>
+
+			{/* <div class="card" style={{marginTop:"3px",boxShadow:"1px 1px 4px #000000"}}>
+		  <input type="number" name="amount" defaultValue="1" min="1" max="5"/>
+		  <label >Please select the amount of NFTs to mint.</label>
+		  <Button onClick={mint}>Buy/Mint!</Button>
+		  </div> */}
+
+            <h6 className="pt-2" style={{ color:"white",  fontWeight: "300", fontSize: "18px" }}>0.05 Ethereum each mint</h6>
+            
+          </form>
+
+
+  <div className="row items mt-3">
+  <div className="ml-3 mr-3" style={{display: "inline-grid",gridTemplateColumns: "repeat(4, 5fr)",columnGap: "15px", rowGap: "15px"}}>
+  {nftdata.map(result => {
+	  return (
+			<div className="card">
+            		<div className="image-over">
+					<img className="card-img-top" src={nftpng + result.tokenID +'.png'} alt="" />
+					</div>
+					<div className="card-caption col-12 p-0">
+                    	<div className="nft-card">
+							<h5 className="mb-0">VileSkulls {result.tokenID}</h5>
+							<h5 className="mb-0 mt-2">Owner Wallet:<p style={{color:"#39FF14",fontWeight:"bold",textShadow:"1px 1px 2px #000000"}}>{result.to}</p></h5>
+                    		<div className="card-bottom d-flex justify-content-between">
+							<Button className="btn btn-bordered-white btn-smaller mt-3">
+								<i className="mr-2" />Buy Now </Button>
+							</div>
+					</div>
+                </div>
+            </div>
+        );
+    })}
+	</div>
+</div>
+  </div>
+	</div>
+ 	</div>
+  			);
+	};
 }
-
-
-export default App;
+	
+	export default App;
