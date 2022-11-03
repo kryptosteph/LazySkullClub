@@ -253,8 +253,8 @@ class App extends Component {
 							<h5 className="mb-0">VileSkulls {result.tokenID}</h5>
 							<h5 className="mb-0 mt-2">Owner Wallet:<p style={{color:"#39FF14",fontWeight:"bold",textShadow:"1px 1px 2px #000000"}}>{result.to}</p></h5>
                     		<div className="card-bottom d-flex justify-content-between">
-							<Button className="btn btn-bordered-white btn-smaller mt-3">
-								<i className="mr-2" />Buy Now </Button>
+							{/* <Button className="btn btn-bordered-white btn-smaller mt-3">
+								<i className="mr-2" />Buy Now </Button> */}
 							</div>
 					</div>
                 </div>
