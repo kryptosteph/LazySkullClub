@@ -149,21 +149,21 @@ class App extends Component {
 
  <nav class="navbar navbarfont navbarglow navbar-expand-md navbar-dark bg-dark mb-4">
           <div class="container-fluid" style={{ fontFamily: "SF Pro Display" }}>
-            <a class="navbar-brand px-5" style={{ fontWeight: "800", fontSize: '25px' }} href="#"></a><img src="n2d-logo.png" width="7%" />
+ {/*            <a class="navbar-brand px-5" style={{ fontWeight: "800", fontSize: '25px' }} href="#"></a><img src="n2d-logo.png" width="7%" /> */}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
               <ul class="navbar-nav me-auto mb-2 px-3 mb-md-0" style={{ fontSize: "25px" }}>
                 <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#">Dashboard</a>
+                  <a class="nav-link active" aria-current="page" href="#">VileSkulls</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#">List NFTs</a>
+                  <a class="nav-link">From phone: Use browser inside Metamsk</a>
                 </li>
-                <li class="nav-item">
+      {/*           <li class="nav-item">
                   <a class="nav-link">Bridge NFTs</a>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
@@ -197,9 +197,9 @@ class App extends Component {
   <form>
             <div className="row ">
               <div>
-                <h1 className="pt-2" style={{color:"white",  fontWeight: "30" }}>NFT Minter</h1>
+                <h1 className="pt-2" style={{color:"white",  fontWeight: "30" }}>VileSkulls NFT Minter</h1>
               </div>
-              <h5 style={{color:"white", textShadow:"1px 1px 3px #000000"}}> Tokens Minted so far= {balance.result}/1000</h5>
+              <h5 style={{color:"white", textShadow:"1px 1px 3px #000000"}}> VileVerse NFTs Minted so far= {balance.result}/1000</h5>
               
 			  <h6 className="pt-2" style={{color:"white",  fontWeight: "20" }}>Your Wallet Address</h6>
               <div className="pb-3" id='wallet-address' style={{
@@ -207,7 +207,7 @@ class App extends Component {
                 fontWeight: "400",
                 textShadow: "1px 1px 1px black",
               }}>
-                <label for="floatingInput">Please Connect Your Wallet</label>
+                <label for="floatingInput">Matthew, Please Connect Your Wallet</label>
               </div>
             </div>
             <div>
