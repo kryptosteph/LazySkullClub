@@ -19,8 +19,11 @@ var contract = null;
 var vaultcontract = null;
 var web3 = null;
 
+/*
+const ADDRESS = "0xaf13d807b39e456783cc66a03856b0fcf5d67625"; this is the lastworking version
+*/
 
-const ADDRESS = "0x58a14661e4484eb928d53b1cd1508ee8524d4a98";
+const ADDRESS = "0xe21C60dAa5946213eA58a98b059cD54E7f859923";
 const apikey = "BM3RX2JPQIAY4USBSSS2K4QHJ2WZ44BQBX";
 const endpoint = "https://api-goerli.etherscan.io/api";
 const nftpng = "https://ipfs.io/ipfs/QmXXCuvVxeFePG8RqXR5KXzPVzaD1QZgiPYYkPpp3NE2kf/";
@@ -155,12 +158,19 @@ class App extends Component {
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
               <ul class="navbar-nav me-auto mb-2 px-3 mb-md-0" style={{ fontSize: "25px" }}>
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="#">VileSkulls</a>
+			  <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="http://vilesverse.io">VileSkulls</a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link">From phone: Use browser inside Metamsk</a>
+				<li class="nav-item">
+                  <a class="nav-link inactive" aria-current="page" href="https://testnets.opensea.io/collection/vileskullsnft-collection-v3">OpenSea</a>
                 </li>
+
+
+				
+
+
+
+                
       {/*           <li class="nav-item">
                   <a class="nav-link">Bridge NFTs</a>
                 </li> */}
@@ -197,9 +207,9 @@ class App extends Component {
   <form>
             <div className="row ">
               <div>
-                <h1 className="pt-2" style={{color:"white",  fontWeight: "30" }}>VileSkulls NFT Minter</h1>
+                <h1 className="pt-2" style={{color:"white",  fontWeight: "30" }}>VileSkulls NFT Minter</h1>	
               </div>
-              <h5 style={{color:"white", textShadow:"1px 1px 3px #000000"}}> VileVerse NFTs Minted so far= {balance.result}/1000</h5>
+              <h5 style={{color:"white", textShadow:"1px 1px 3px #000000"}}> VileSkulls NFTs Minted so far= {balance.result}/1000</h5>
               
 			  <h6 className="pt-2" style={{color:"white",  fontWeight: "20" }}>Your Wallet Address</h6>
               <div className="pb-3" id='wallet-address' style={{
@@ -207,7 +217,7 @@ class App extends Component {
                 fontWeight: "400",
                 textShadow: "1px 1px 1px black",
               }}>
-                <label for="floatingInput">Matthew, Please Connect Your Wallet</label>
+                <label for="floatingInput">Please Connect Your MetaMask Wallet</label>
               </div>
             </div>
             <div>
@@ -235,8 +245,8 @@ class App extends Component {
 		  <Button onClick={mint}>Buy/Mint!</Button>
 		  </div> */}
 
-            <h6 className="pt-2" style={{ color:"white",  fontWeight: "300", fontSize: "18px" }}>0.05 Ethereum each mint</h6>
-            
+<h5 className="pt-2" style={{ padding: "2px, 2px, 1px, 1px", color:"white",  fontWeight: "300", fontSize: "18px" }}>0.05 Ethereum each mint</h5>
+<h5 className="pt-2" style={{ padding: "2px, 2px, 1px, 1px", color:"white",  fontWeight: "300", fontSize: "18px" }}>mobile users use browser inside MetaMask </h5>
           </form>
 
 
